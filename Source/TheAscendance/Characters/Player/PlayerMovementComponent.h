@@ -24,8 +24,8 @@ class THEASCENDANCE_API UPlayerMovementComponent : public UCharacterMovementComp
 	GENERATED_BODY()
 	
 public:
-	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconda) override;
-	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconda) override;
+	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
+	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
 
 	void TrySprinting();
 	bool CanSprint();
@@ -48,9 +48,37 @@ public:
 	float GetCapsuleRadius() const;
 	float GetCapsuleHalfHeight() const;
 	virtual float GetMaxSpeed() const override;
-	virtual bool IsMovingOnGround() const override;
 
 protected:
 	virtual void InitializeComponent() override;
 	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
+
+private:
+	//---- MANTLING ----
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	float _maxFrontMantleCheckDistance = 50;
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	float _mantleUpOffsetDistance = 30;
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	float _mantleReachHeight = 50;
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	float _mantleMinWallSteepnessAngle = 75;
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	float _mantleMaxSurfaceAngle = 40;
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	float _mantleMaxAlignmentAngle = 55;
+
+	//---- SPRINTING ----
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Sprinting")
+	float _sprintSpeedBonus = 200.f;
+	bool _isSprinting;
+
+	//---- CROUCHING ----
+	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Crouching")
+	float _crouchSpeed = 200.0f;
+	bool _isCrouching;
+
+	TWeakObjectPtr<APlayerCharacter> _player;
+
+	EMovementMode _lastMode;
 };

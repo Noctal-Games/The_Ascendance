@@ -15,6 +15,16 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	void SetIsSprinting(bool val);
+	bool IsSprinting() const;
+	void SetIsCrouching(bool val);
+	bool IsCrouching() const;
+	bool IsCrouched() const;
+	void SetIsJumping();
+	virtual bool CanJumpInternal_Implementation() const override;
+	virtual void OnJumped_Implementation() override;
+	float GetDefaultCapsuleHeight();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 protected:

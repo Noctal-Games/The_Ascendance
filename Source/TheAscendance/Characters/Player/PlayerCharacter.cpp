@@ -15,6 +15,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 	ABaseCharacter::Tick(DeltaTime);
 }
 
+void APlayerCharacter::SetIsSprinting(bool val)
+{
+}
+
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
