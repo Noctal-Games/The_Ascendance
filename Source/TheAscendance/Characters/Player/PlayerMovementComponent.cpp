@@ -133,12 +133,12 @@ bool UPlayerMovementComponent::CanUnCrouch()
 	return true;
 }
 
-float UPlayerMovementComponent::GetSpeed() const
+float UPlayerMovementComponent::GetSpeed() 
 {
 	return Velocity.Length();
 }
 
-bool UPlayerMovementComponent::IsWalkingCustom() const
+bool UPlayerMovementComponent::IsWalkingCustom() 
 {
 	if (!IsWalking() || FMath::IsNearlyZero(GetSpeed()))
 	{
@@ -153,24 +153,24 @@ bool UPlayerMovementComponent::IsWalkingCustom() const
 	return true;
 }
 
-bool UPlayerMovementComponent::IsSprinting() const
+bool UPlayerMovementComponent::IsSprinting() 
 {
 	return _isSprinting;
 }
-bool UPlayerMovementComponent::IsCrouchingCustom() const
+bool UPlayerMovementComponent::IsCrouchingCustom() 
 {
 	return _isCrouching;
 }
 
-bool UPlayerMovementComponent::IsCustomMovementMode() const
+bool UPlayerMovementComponent::IsCustomMovementMode() 
 {
 	return MovementMode == MOVE_Custom;
 }
-float UPlayerMovementComponent::GetCapsuleRadius() const
+float UPlayerMovementComponent::GetCapsuleRadius() 
 {
 	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius();
 }
-float UPlayerMovementComponent::GetCapsuleHalfHeight() const
+float UPlayerMovementComponent::GetCapsuleHalfHeight() 
 {
 	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 }

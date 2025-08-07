@@ -18,7 +18,7 @@ enum ECustomMovementMode
 
 class APlayerCharacter;
 
-UCLASS()
+UCLASS(Blueprintable)
 class THEASCENDANCE_API UPlayerMovementComponent : public UCharacterMovementComponent
 {
 	GENERATED_BODY()
@@ -37,16 +37,16 @@ public:
 	bool CanUnCrouch();
 
 	UFUNCTION(BlueprintPure)
-	float GetSpeed() const;
+	float GetSpeed();
 	UFUNCTION(BlueprintPure)
-	bool IsWalkingCustom() const;
+	bool IsWalkingCustom();
 	UFUNCTION(BlueprintPure)
-	bool IsSprinting() const;
+	bool IsSprinting();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool IsCrouchingCustom() const;
-	bool IsCustomMovementMode() const;
-	float GetCapsuleRadius() const;
-	float GetCapsuleHalfHeight() const;
+	bool IsCrouchingCustom();
+	bool IsCustomMovementMode();
+	float GetCapsuleRadius();
+	float GetCapsuleHalfHeight();
 	virtual float GetMaxSpeed() const override;
 
 protected:
@@ -81,4 +81,5 @@ private:
 	TWeakObjectPtr<APlayerCharacter> _player;
 
 	EMovementMode _lastMode;
+	bool _isActive;
 };

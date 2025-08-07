@@ -10,6 +10,8 @@ ABaseCharacter::ABaseCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	characterStatsComponent = CreateDefaultSubobject<UCharacterStatsComponent>(TEXT("Character Stats Component"));
+	checkf(characterStatsComponent, TEXT("Character Stats Component failed to initialise"));
 }
 
 void ABaseCharacter::Heal(int amount)
