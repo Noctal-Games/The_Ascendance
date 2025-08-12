@@ -22,7 +22,7 @@ void ATAPlayerController::HandleMove(const FInputActionValue& Value)
 	const FVector movementVector = Value.Get<FVector>();
 
 	_playerCharacter->AddMovementInput(_playerCharacter->GetActorForwardVector(), movementVector.Y);
-	_playerCharacter->AddMovementInput(_playerCharacter->GetActorRightVector(), movementVector.X);
+	_playerCharacter->AddMovementInput(_playerCharacter->GetCamera()->GetRightVector(), movementVector.X);
 }
 
 void ATAPlayerController::HandleJump()

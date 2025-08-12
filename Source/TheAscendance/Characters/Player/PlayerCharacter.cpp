@@ -10,7 +10,7 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter() : ABaseCharacter()
 {
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationPitch = false;
 
