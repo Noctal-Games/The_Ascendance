@@ -29,6 +29,10 @@
 		{
 			"Name": "Chooser",
 			"Enabled": true
+		},
+		{
+			"Name": "Locomotor",
+			"Enabled": true
 		}
 	]
 }
