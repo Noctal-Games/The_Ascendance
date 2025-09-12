@@ -32,8 +32,8 @@ public:
 	virtual void OnJumped_Implementation() override;
 	float GetDefaultCapsuleHeight();
 
-	void UpdateCrouchCamera(float DeltaTime);
-	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+	void UpdateCrouchCamera(float deltaTime);
+	virtual void OnMovementModeChanged(EMovementMode prevMovementMode, uint8 previousCustomMode) override;
 
 	UCameraComponent* GetCamera();
 
@@ -44,28 +44,20 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "CAMERA")
-	TObjectPtr<UCameraComponent> _camera;
-	UPROPERTY(EditDefaultsOnly, Category = "MOVEMENT")
-	TObjectPtr<UPlayerMovementComponent> _movementComponent;
+	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Player Camera"))
+	TObjectPtr<UCameraComponent> m_Camera = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<ATAPlayerController> _playerController;
+	TObjectPtr<UPlayerMovementComponent> m_MovementComponent = nullptr;
+	UPROPERTY()
+	TObjectPtr<ATAPlayerController> m_PlayerController = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "STATS")
-	float _baseHealth;
-	UPROPERTY(EditDefaultsOnly, Category = "STATS")
-	float _baseStamina;
-	UPROPERTY(EditDefaultsOnly, Category = "STATS")
-	float _baseMana;
-	UPROPERTY(EditDefaultsOnly, Category = "STATS")
-	float _baseSpeed;
+	float m_CrouchCapsuleHeight = 0.0f;
+	float m_CurrentCapsuleHeight = 0.0f;
+	float m_DefaultCapsuleHeight = 0.0f;
+	float m_DefaultCapsuleRadius = 0.0f;
 
-	float _crouchCapsuleHeight;
-	float _currentCapsuleHeight;
-	float _defaultCapsuleHeight;
-	float _defaultCapsuleRadius;
-
-	bool _isSprinting;
-	bool _isCrouching;
-	bool _isJumping;
+	bool m_IsSprinting = false;
+	bool m_IsCrouching = false;
+	bool m_IsJumping = false;
 };

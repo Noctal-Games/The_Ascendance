@@ -8,8 +8,9 @@
 #include "CharacterStatsComponent.generated.h"
 
 DECLARE_DELEGATE_TwoParams(FOnStatChanged, float, float);
+DECLARE_DELEGATE_OneParam(FOnSpeedStatChanged, float);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class THEASCENDANCE_API UCharacterStatsComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -17,6 +18,8 @@ class THEASCENDANCE_API UCharacterStatsComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UCharacterStatsComponent();
+
+	void Init();
 
 	void AddStat(ECharacterStat stat, float maxValue);
 
@@ -31,7 +34,7 @@ public:
 	int GetStatMaxValue(ECharacterStat stat) const;
 
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float deltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -46,27 +49,48 @@ public:
 	FOnStatChanged OnStaminaChanged;
 	FOnStatChanged OnHealthChanged;
 	FOnStatChanged OnManaChanged;
-	FOnStatChanged OnSpeedChanged;
+	FOnSpeedStatChanged OnSpeedChanged;
 
 private:
 	UPROPERTY()
-	TMap<ECharacterStat, float> _statsBase;
+	TMap<ECharacterStat, float> m_StatsBase;
 	UPROPERTY()
-	TMap<ECharacterStat, int> _statsMax;
+	TMap<ECharacterStat, int> m_StatsMax;
 	UPROPERTY()
-	TMap<ECharacterStat, float> _stats;
+	TMap<ECharacterStat, float> m_Stats;
+
+	//---- HEALTH ----
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Health", meta = (DisplayName = "Base Health"))
+	float m_BaseHealth = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Health", meta = (DisplayName = "Health Regeneration Per Tick"))
+	float m_HealthRegenPerTick = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Health", meta = (DisplayName = "Health Regeneration Delay"))
+	float m_HealthRegenDelay = 0;
+	float m_HealthRegenTimer = 0;
 
 	//--- STAMINA ----
-	UPROPERTY(EditDefaultsOnly, Category = "STATS | STAMINA")
-	float _staminaRegenPerTick;
-	UPROPERTY(EditDefaultsOnly, Category = "STATS | STAMINA")
-	float _staminaRegenDelay;
-	float _staminaTimer;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Stamina", meta = (DisplayName = "Base Stamina"))
+	float m_BaseStamina = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Stamina", meta = (DisplayName = "Stamina Regeneration Per Tick"))
+	float m_StaminaRegenPerTick = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Stamina", meta = (DisplayName = "Stamina Regeneration Delay"))
+	float m_StaminaRegenDelay = 0;
+	float m_StaminaRegenTimer = 0;
 
 	//--- MANA ----
-	UPROPERTY(EditDefaultsOnly, Category = "STATS | MANA")
-	float _manaRegenPerTick;
-	UPROPERTY(EditDefaultsOnly, Category = "STATS | MANA")
-	float _manaRegenDelay;
-	float _manaTimer;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Mana", meta = (DisplayName = "Base Mana"))
+	float m_BaseMana = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Mana", meta = (DisplayName = "Mana Regeneration Per Tick"))
+	float m_ManaRegenPerTick = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Mana", meta = (DisplayName = "Mana Regeneration Delay"))
+	float m_ManaRegenDelay = 0;
+	float m_ManaRegenTimer = 0;
+
+	//--- SPEED ---
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Speed", meta = (DisplayName = "Base Walk Speed"))
+	float m_BaseWalkSpeed = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Speed", meta = (DisplayName = "Sprint Speed Bonus"))
+	float m_SprintSpeedBonus = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Stats | Speed", meta = (DisplayName = "Crouch Speed Penalty"))
+	float m_CrouchSpeedPenalty = 0;
 };
