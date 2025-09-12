@@ -14,20 +14,20 @@ APlayerCharacter::APlayerCharacter() : ABaseCharacter()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationPitch = false;
 
-	_camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
-	checkf(_camera, TEXT("Player Camera failed to initialise"));
-	_camera->SetupAttachment(GetRootComponent());
-	_camera->bUsePawnControlRotation = true;
+	m_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
+	checkf(m_Camera, TEXT("Player Camera failed to initialise"));
+	m_Camera->SetupAttachment(GetRootComponent());
+	m_Camera->bUsePawnControlRotation = true;
 }
 
 void APlayerCharacter::SetPlayerController(ATAPlayerController* PlayerController)
 {
-	_playerController = PlayerController;
+	m_PlayerController = PlayerController;
 }
 
 ATAPlayerController* APlayerCharacter::GetPlayerController()
 {
-	return _playerController;
+	return m_PlayerController;
 }
 
 // Called every frame
@@ -38,48 +38,48 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::SetIsSprinting(bool val)
 {
-	_isSprinting = val;
+	m_IsSprinting = val;
 }
 bool APlayerCharacter::IsSprinting()
 {
-	if (characterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) <= 0)
+	if (m_CharacterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) <= 0)
 	{
 		return false;
 	}
 
-	return _isSprinting;
+	return m_IsSprinting;
 }
 void APlayerCharacter::SetIsCrouching(bool val)
 {
-	_isCrouching = val;
+	m_IsCrouching = val;
 }
 bool APlayerCharacter::IsCrouching()
 {
-	if (_isJumping == true)
+	if (m_IsJumping == true)
 	{
 		return false;
 	}
 
-	return _isCrouching;
+	return m_IsCrouching;
 }
 bool APlayerCharacter::IsCrouched()
 {
-	return _currentCapsuleHeight < _defaultCapsuleHeight - 5;
+	return m_CurrentCapsuleHeight < m_DefaultCapsuleHeight - 5;
 }
 void APlayerCharacter::SetIsJumping()
 {
-	_isJumping = true;
+	m_IsJumping = true;
 }
 bool APlayerCharacter::CanJumpInternal_Implementation() const
 {
-	if (bIsCrouched == true || characterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) < 5)
+	if (bIsCrouched == true || m_CharacterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) < 5)
 	{
 		return false;
 	}
 
 	if (JumpIsAllowedInternal() == false)
 	{
-		if (_movementComponent->IsSprinting() == true)
+		if (m_MovementComponent->IsSprinting() == true)
 		{
 			return true;
 		}
@@ -93,42 +93,42 @@ void APlayerCharacter::OnJumped_Implementation()
 {
 	Super::OnJumped_Implementation();
 
-	characterStatsComponent->AdjustStatByValue(ECharacterStat::STAMINA, -5);
+	m_CharacterStatsComponent->AdjustStatByValue(ECharacterStat::STAMINA, -5);
 }
 float APlayerCharacter::GetDefaultCapsuleHeight()
 {
-	return _defaultCapsuleHeight;
+	return m_DefaultCapsuleHeight;
 }
-void APlayerCharacter::UpdateCrouchCamera(float DeltaTime)
+void APlayerCharacter::UpdateCrouchCamera(float deltaTime)
 {
-	float crouchSpeed = DeltaTime * 5;
+	float crouchSpeed = deltaTime * 5;
 
-	if (_movementComponent->IsCrouchingCustom() && _currentCapsuleHeight > _crouchCapsuleHeight)
+	if (m_MovementComponent->IsCrouchingCustom() && m_CurrentCapsuleHeight > m_CrouchCapsuleHeight)
 	{
-		_currentCapsuleHeight = FMath::Lerp(_currentCapsuleHeight, _crouchCapsuleHeight, crouchSpeed);
-		GetCapsuleComponent()->SetCapsuleSize(_defaultCapsuleRadius, _currentCapsuleHeight, true);
+		m_CurrentCapsuleHeight = FMath::Lerp(m_CurrentCapsuleHeight, m_CrouchCapsuleHeight, crouchSpeed);
+		GetCapsuleComponent()->SetCapsuleSize(m_DefaultCapsuleRadius, m_CurrentCapsuleHeight, true);
 	}
-	if (_movementComponent->IsCrouchingCustom() == false && _currentCapsuleHeight < _defaultCapsuleHeight)
+	if (m_MovementComponent->IsCrouchingCustom() == false && m_CurrentCapsuleHeight < m_DefaultCapsuleHeight)
 	{
-		_currentCapsuleHeight = FMath::Lerp(_currentCapsuleHeight, _defaultCapsuleHeight, crouchSpeed);
-		GetCapsuleComponent()->SetCapsuleSize(_defaultCapsuleRadius, _currentCapsuleHeight, true);
+		m_CurrentCapsuleHeight = FMath::Lerp(m_CurrentCapsuleHeight, m_DefaultCapsuleHeight, crouchSpeed);
+		GetCapsuleComponent()->SetCapsuleSize(m_DefaultCapsuleRadius, m_CurrentCapsuleHeight, true);
 	}
 }
-void APlayerCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
+void APlayerCharacter::OnMovementModeChanged(EMovementMode prevMovementMode, uint8 previousCustomMode)
 {
-	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+	Super::OnMovementModeChanged(prevMovementMode, previousCustomMode);
 
-	if (PrevMovementMode != EMovementMode::MOVE_Falling)
+	if (prevMovementMode != EMovementMode::MOVE_Falling)
 	{
 		return;
 	}
 
-	_isJumping = false;
+	m_IsJumping = false;
 }
 
 UCameraComponent* APlayerCharacter::GetCamera()
 {
-	return _camera;
+	return m_Camera;
 }
 
 // Called when the game starts or when spawned
@@ -136,25 +136,13 @@ void APlayerCharacter::BeginPlay()
 {
 	ABaseCharacter::BeginPlay();
 
-	_movementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	checkf(_movementComponent, TEXT("Movement Component is an invalid value"));
+	m_MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	checkf(m_MovementComponent, TEXT("Movement Component is an invalid value"));
 
-	_defaultCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
-	_defaultCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	_currentCapsuleHeight = _defaultCapsuleHeight;
-	_crouchCapsuleHeight = _defaultCapsuleHeight / 2;
-
-	if (characterStatsComponent != nullptr)
-	{
-		characterStatsComponent->AddStat(ECharacterStat::HEALTH, _baseHealth);
-		characterStatsComponent->AddStat(ECharacterStat::STAMINA, _baseStamina);
-		characterStatsComponent->AddStat(ECharacterStat::MANA, _baseMana);
-		characterStatsComponent->AddStat(ECharacterStat::SPEED, _baseSpeed);
-		characterStatsComponent->AddStat(ECharacterStat::PHYSICAL_ATTACK, 0);
-		characterStatsComponent->AddStat(ECharacterStat::PHYSICAL_RESISTANCE, 0);
-		characterStatsComponent->AddStat(ECharacterStat::MAGIC_ATTACK, 0);
-		characterStatsComponent->AddStat(ECharacterStat::MAGIC_RESISTANCE, 0);
-	}
+	m_DefaultCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+	m_DefaultCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	m_CurrentCapsuleHeight = m_DefaultCapsuleHeight;
+	m_CrouchCapsuleHeight = m_DefaultCapsuleHeight / 2;
 }
 
 

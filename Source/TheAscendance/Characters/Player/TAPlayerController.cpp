@@ -9,46 +9,82 @@ void ATAPlayerController::DisplayHUD()
 {
 }
 
-void ATAPlayerController::HandleLook(const FInputActionValue& Value)
+void ATAPlayerController::HandleLook(const FInputActionValue& value)
 {
-	const FVector rotationVector = Value.Get<FVector>();
+	const FVector rotationVector = value.Get<FVector>();
 
-	AddYawInput(rotationVector.X * horizontalSensitivity);
-	AddPitchInput(rotationVector.Y * verticalSensitivity);
+	AddYawInput(rotationVector.X * HorizontalSensitivity);
+	AddPitchInput(rotationVector.Y * VerticalSensitivity);
 }
 
-void ATAPlayerController::HandleMove(const FInputActionValue& Value)
+void ATAPlayerController::HandleMove(const FInputActionValue& value)
 {
-	const FVector movementVector = Value.Get<FVector>();
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		return;
+	}
 
-	_playerCharacter->AddMovementInput(_playerCharacter->GetActorForwardVector(), movementVector.Y);
-	_playerCharacter->AddMovementInput(_playerCharacter->GetCamera()->GetRightVector(), movementVector.X);
+	const FVector movementVector = value.Get<FVector>();
+
+	m_PlayerCharacter->AddMovementInput(m_PlayerCharacter->GetActorForwardVector(), movementVector.Y);
+	m_PlayerCharacter->AddMovementInput(m_PlayerCharacter->GetCamera()->GetRightVector(), movementVector.X);
 }
 
 void ATAPlayerController::HandleJump()
 {
-	_playerCharacter->SetIsJumping();
-	_playerCharacter->Jump();
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		return;
+	}
+
+	m_PlayerCharacter->SetIsJumping();
+	m_PlayerCharacter->Jump();
 }
 
 void ATAPlayerController::HandleStartSprint()
 {
-	_playerCharacter->SetIsSprinting(true);
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		return;
+	}
+
+	m_PlayerCharacter->SetIsSprinting(true);
 }
 
 void ATAPlayerController::HandleEndSprint()
 {
-	_playerCharacter->SetIsSprinting(false);
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		return;
+	}
+
+	m_PlayerCharacter->SetIsSprinting(false);
 }
 
 void ATAPlayerController::HandleStartCrouch()
 {
-	_playerCharacter->SetIsCrouching(true);
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		return;
+	}
+
+	m_PlayerCharacter->SetIsCrouching(true);
 }
 
 void ATAPlayerController::HandleEndCrouch()
 {
-	_playerCharacter->SetIsCrouching(false);
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		return;
+	}
+
+	m_PlayerCharacter->SetIsCrouching(false);
 }
 
 void ATAPlayerController::HandleMainHandPrimaryAttack()
@@ -83,9 +119,9 @@ void ATAPlayerController::HandleInteract()
 {
 }
 
-void ATAPlayerController::OnPossess(APawn* aPawn)
+void ATAPlayerController::OnPossess(APawn* pawn)
 {
-	Super::OnPossess(aPawn);
+	Super::OnPossess(pawn);
 
 	//if (TObjectPtr<UUIManagerSubsystem> uiManager = GetGameInstance()->GetSubsystem<UUIManagerSubsystem>())
 	//{
@@ -93,67 +129,74 @@ void ATAPlayerController::OnPossess(APawn* aPawn)
 	//	_uiManager->CreateWidgets(this);
 	//}
 
-	_playerCharacter = Cast<APlayerCharacter>(aPawn);
-	_playerCharacter->SetPlayerController(this);
+	m_PlayerCharacter = Cast<APlayerCharacter>(pawn);
 
-	_enhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	checkf(_enhancedInputComponent, TEXT("ENHANCED_INPUT_COMPONENT is an invalid value"));
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController failed to store reference to PlayerCharacter"));
+		return;
+	}
+
+	m_PlayerCharacter->SetPlayerController(this);
+
+	m_EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+	checkf(m_EnhancedInputComponent, TEXT("ENHANCED_INPUT_COMPONENT is an invalid value"));
 
 	UEnhancedInputLocalPlayerSubsystem* inputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	checkf(inputSubsystem, TEXT("INPUT_SUBSYSTEM is an invalid value"));
 
-	checkf(inputMappingContext, TEXT("INPUT_MAPPING_CONTEXT is an invalid value"));
+	checkf(InputMappingContext, TEXT("INPUT_MAPPING_CONTEXT is an invalid value"));
 	inputSubsystem->ClearAllMappings();
-	inputSubsystem->AddMappingContext(inputMappingContext, 0);
+	inputSubsystem->AddMappingContext(InputMappingContext, 0);
 
-	BindActions(_enhancedInputComponent);
+	BindActions(m_EnhancedInputComponent);
 }
 
 void ATAPlayerController::OnUnPossess()
 {
-	_enhancedInputComponent->ClearActionBindings();
+	m_EnhancedInputComponent->ClearActionBindings();
 
 	Super::OnUnPossess();
 }
 
-void ATAPlayerController::BindActions(UEnhancedInputComponent* EnhancedInputComponent)
+void ATAPlayerController::BindActions(UEnhancedInputComponent* enhancedInputComponent)
 {
-	checkf(actionLook, TEXT("Missing 'Look' Action"));
-	EnhancedInputComponent->BindAction(actionLook, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleLook);
+	checkf(ActionLook, TEXT("Missing 'Look' Action"));
+	enhancedInputComponent->BindAction(ActionLook, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleLook);
 
-	checkf(actionMove, TEXT("Missing 'Move' Action"));
-	EnhancedInputComponent->BindAction(actionMove, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMove);
+	checkf(ActionMove, TEXT("Missing 'Move' Action"));
+	enhancedInputComponent->BindAction(ActionMove, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMove);
 
-	checkf(actionJump, TEXT("Missing 'Jump' Action"));
-	EnhancedInputComponent->BindAction(actionJump, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleJump);
+	checkf(ActionJump, TEXT("Missing 'Jump' Action"));
+	enhancedInputComponent->BindAction(ActionJump, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleJump);
 
-	checkf(actionSprint, TEXT("Missing 'Sprint' Action"));
-	EnhancedInputComponent->BindAction(actionSprint, ETriggerEvent::Started, this, &ATAPlayerController::HandleStartSprint);
-	EnhancedInputComponent->BindAction(actionSprint, ETriggerEvent::Completed, this, &ATAPlayerController::HandleEndSprint);
+	checkf(ActionSprint, TEXT("Missing 'Sprint' Action"));
+	enhancedInputComponent->BindAction(ActionSprint, ETriggerEvent::Started, this, &ATAPlayerController::HandleStartSprint);
+	enhancedInputComponent->BindAction(ActionSprint, ETriggerEvent::Completed, this, &ATAPlayerController::HandleEndSprint);
 
-	checkf(actionSprint, TEXT("Missing 'Crouch' Action"));
-	EnhancedInputComponent->BindAction(actionCrouch, ETriggerEvent::Started, this, &ATAPlayerController::HandleStartCrouch);
-	EnhancedInputComponent->BindAction(actionCrouch, ETriggerEvent::Completed, this, &ATAPlayerController::HandleEndCrouch);
+	checkf(ActionSprint, TEXT("Missing 'Crouch' Action"));
+	enhancedInputComponent->BindAction(ActionCrouch, ETriggerEvent::Started, this, &ATAPlayerController::HandleStartCrouch);
+	enhancedInputComponent->BindAction(ActionCrouch, ETriggerEvent::Completed, this, &ATAPlayerController::HandleEndCrouch);
 
-	checkf(actionToggleInventory, TEXT("Missing 'Toggle Inventory' Action"));
-	EnhancedInputComponent->BindAction(actionToggleInventory, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleToggleInventory);
+	checkf(ActionToggleInventory, TEXT("Missing 'Toggle Inventory' Action"));
+	enhancedInputComponent->BindAction(ActionToggleInventory, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleToggleInventory);
 
-	checkf(actionToggleQuestMenu, TEXT("Missing 'Toggle Quest Menu' Action"));
-	EnhancedInputComponent->BindAction(actionToggleQuestMenu, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleToggleQuestMenu);
+	checkf(ActionToggleQuestMenu, TEXT("Missing 'Toggle Quest Menu' Action"));
+	enhancedInputComponent->BindAction(ActionToggleQuestMenu, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleToggleQuestMenu);
 
-	checkf(actionMainHandPrimaryAttack, TEXT("Missing 'Main Hand Primary Attack' Action"));
-	EnhancedInputComponent->BindAction(actionMainHandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandPrimaryAttack);
-	checkf(actionMainHandAltAttack, TEXT("Missing 'Main Hand Alt Attack' Action"));
-	EnhancedInputComponent->BindAction(actionMainHandAltAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandAltAttack);
+	checkf(ActionMainHandPrimaryAttack, TEXT("Missing 'Main Hand Primary Attack' Action"));
+	enhancedInputComponent->BindAction(ActionMainHandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandPrimaryAttack);
+	checkf(ActionMainHandAltAttack, TEXT("Missing 'Main Hand Alt Attack' Action"));
+	enhancedInputComponent->BindAction(ActionMainHandAltAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandAltAttack);
 
-	checkf(actionOffhandPrimaryAttack, TEXT("Missing 'Offhand Primary Attack' Action"));
-	EnhancedInputComponent->BindAction(actionOffhandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandPrimaryAttack);
-	checkf(actionOffhandAltAttack, TEXT("Missing 'Offhand Alt Attack' Action"));
-	EnhancedInputComponent->BindAction(actionOffhandAltAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandAltAttack);
+	checkf(ActionOffhandPrimaryAttack, TEXT("Missing 'Offhand Primary Attack' Action"));
+	enhancedInputComponent->BindAction(ActionOffhandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandPrimaryAttack);
+	checkf(ActionOffhandAltAttack, TEXT("Missing 'Offhand Alt Attack' Action"));
+	enhancedInputComponent->BindAction(ActionOffhandAltAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandAltAttack);
 
-	checkf(actionTogglePauseMenu, TEXT("Missing 'TogglePauseMenu' Action"));
-	EnhancedInputComponent->BindAction(actionTogglePauseMenu, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleTogglePauseMenu);
+	checkf(ActionTogglePauseMenu, TEXT("Missing 'TogglePauseMenu' Action"));
+	enhancedInputComponent->BindAction(ActionTogglePauseMenu, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleTogglePauseMenu);
 
-	checkf(actionInteract, TEXT("Missing 'Interact' Action"));
-	EnhancedInputComponent->BindAction(actionInteract, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleInteract);
+	checkf(ActionInteract, TEXT("Missing 'Interact' Action"));
+	enhancedInputComponent->BindAction(ActionInteract, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleInteract);
 }

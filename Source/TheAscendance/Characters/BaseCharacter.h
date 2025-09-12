@@ -31,6 +31,6 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UCharacterStatsComponent> characterStatsComponent;
+	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Character Stats Component"))
+	TObjectPtr<UCharacterStatsComponent> m_CharacterStatsComponent = nullptr;
 };

@@ -22,8 +22,8 @@ public:
 
 protected:
 	//---- INPUT HANDLERS ----
-	void HandleLook(const struct FInputActionValue& Value);
-	void HandleMove(const struct FInputActionValue& Value);
+	void HandleLook(const struct FInputActionValue& value);
+	void HandleMove(const struct FInputActionValue& value);
 	void HandleJump();
 	void HandleStartSprint();
 	void HandleEndSprint();
@@ -41,61 +41,62 @@ protected:
 	void HandleTogglePauseMenu();
 	void HandleInteract();
 
-	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnPossess(APawn* pawn) override;
 	virtual void OnUnPossess() override;
 private:
-	void BindActions(UEnhancedInputComponent* EnhancedInputComponent);
+	void BindActions(UEnhancedInputComponent* enhancedInputComponent);
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = "0.01", ClampMax = "1.0"))
-	float horizontalSensitivity;
+	float HorizontalSensitivity;
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = "0.01", ClampMax = "1.0"))
-	float verticalSensitivity;
+	float VerticalSensitivity;
 
 	//---- INPUTS ----
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Mapping Context")
-	TObjectPtr<UInputMappingContext> inputMappingContext;
+	TObjectPtr<UInputMappingContext> InputMappingContext = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Movement")
-	TObjectPtr<UInputAction> actionLook;
+	TObjectPtr<UInputAction> ActionLook = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Movement")
-	TObjectPtr<UInputAction> actionMove;
+	TObjectPtr<UInputAction> ActionMove = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Movement")
-	TObjectPtr<UInputAction> actionJump;
+	TObjectPtr<UInputAction> ActionJump = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Movement")
-	TObjectPtr<UInputAction> actionSprint;
+	TObjectPtr<UInputAction> ActionSprint = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Movement")
-	TObjectPtr<UInputAction> actionCrouch;
+	TObjectPtr<UInputAction> ActionCrouch = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionToggleInventory;
+	TObjectPtr<UInputAction> ActionToggleInventory = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionToggleQuestMenu;
+	TObjectPtr<UInputAction> ActionToggleQuestMenu = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionMainHandPrimaryAttack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionMainHandAltAttack;
+	TObjectPtr<UInputAction> ActionMainHandPrimaryAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionOffhandPrimaryAttack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionOffhandAltAttack;
+	TObjectPtr<UInputAction> ActionMainHandAltAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionTogglePauseMenu;
+	TObjectPtr<UInputAction> ActionOffhandPrimaryAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> actionInteract;
+	TObjectPtr<UInputAction> ActionOffhandAltAttack = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
+	TObjectPtr<UInputAction> ActionTogglePauseMenu = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
+	TObjectPtr<UInputAction> ActionInteract = nullptr;
 
 private:
 	UPROPERTY()
-	TObjectPtr<UEnhancedInputComponent> _enhancedInputComponent;
-	UPROPERTY()
-	TWeakObjectPtr<APlayerCharacter> _playerCharacter;
+	TObjectPtr<UEnhancedInputComponent> m_EnhancedInputComponent = nullptr;
+	TWeakObjectPtr<APlayerCharacter> m_PlayerCharacter = nullptr;
 };
