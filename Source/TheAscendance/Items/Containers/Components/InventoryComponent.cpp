@@ -15,7 +15,10 @@ UInventoryComponent::UInventoryComponent()
 
 void UInventoryComponent::SetInventory(const TArray<FInventorySlotData>& inventory)
 {
-	m_Inventory = inventory;
+	for (const auto data : inventory)
+	{
+		m_Inventory.Add(MakeShared<FInventorySlotData>(data));
+	}
 }
 
 void UInventoryComponent::AddItem(int id, int amount)
@@ -36,14 +39,14 @@ void UInventoryComponent::AddItem(int id, int amount)
 		else
 		{
 			int index = m_Inventory.Num();
-			m_Inventory.Add(FInventorySlotData{ index, id, amount });
+			m_Inventory.Add(MakeShared<FInventorySlotData>(index, id, amount));
 		}
 	}
 }
 
 void UInventoryComponent::RemoveItem(int id, int amount)
 {
-	std::shared_ptr<FInventorySlotData> data = GetInventorySlotData(id);
+	TSharedPtr<FInventorySlotData> data = GetInventorySlotData(id);
 
 	if (data == nullptr)
 	{
@@ -66,7 +69,7 @@ void UInventoryComponent::RemoveItemAtIndex(int index, int amount)
 		return;
 	}
 
-	std::shared_ptr<FInventorySlotData> data = GetInventorySlotDataAtIndex(index);
+	TSharedPtr<FInventorySlotData> data = GetInventorySlotDataAtIndex(index);
 
 	if (data == nullptr)
 	{
@@ -84,7 +87,7 @@ void UInventoryComponent::RemoveItemAtIndex(int index, int amount)
 
 int UInventoryComponent::GetItemCount(int id)
 {
-	std::shared_ptr<FInventorySlotData> data = GetInventorySlotData(id);
+	TSharedPtr<FInventorySlotData> data = GetInventorySlotData(id);
 
 	if (data == nullptr)
 	{
@@ -95,26 +98,26 @@ int UInventoryComponent::GetItemCount(int id)
 	return data->ItemAmount;
 }
 
-const TArray<FInventorySlotData>& UInventoryComponent::GetInventory()
+const TArray<TSharedRef<FInventorySlotData>>& UInventoryComponent::GetInventory()
 {
 	return m_Inventory;
 }
 
-std::shared_ptr<FInventorySlotData> UInventoryComponent::GetInventorySlotDataAtIndex(int index)
+TSharedPtr<FInventorySlotData> UInventoryComponent::GetInventorySlotDataAtIndex(int index)
 {
 	if (index < 0 || index >= m_Inventory.Num())
 	{
 		return nullptr;
 	}
 
-	return std::make_shared<FInventorySlotData>(m_Inventory[index]);
+	return m_Inventory[index];
 }
 
 bool UInventoryComponent::Contains(int id)
 {
-	for (FInventorySlotData data : m_Inventory)
+	for (const auto data : m_Inventory)
 	{
-		if (data.ItemID == id)
+		if (data->ItemID == id)
 		{
 			return true;
 		}
@@ -123,13 +126,13 @@ bool UInventoryComponent::Contains(int id)
 	return false;
 }
 
-std::shared_ptr<FInventorySlotData> UInventoryComponent::GetInventorySlotData(int id)
+TSharedPtr<FInventorySlotData> UInventoryComponent::GetInventorySlotData(int id)
 {
-	for (FInventorySlotData data : m_Inventory)
+	for (const auto data : m_Inventory)
 	{
-		if (data.ItemID == id)
+		if (data->ItemID == id)
 		{
-			return std::make_shared<FInventorySlotData>(m_Inventory[data.InventoryIndex]);
+			return data;
 		}
 	}
 
@@ -140,11 +143,11 @@ void UInventoryComponent::RemoveItemFromArray(int index)
 {
 	m_Inventory.RemoveAt(index);
 
-	for (FInventorySlotData& data : m_Inventory)
+	for (const auto data : m_Inventory)
 	{
-		if (data.InventoryIndex > index)
+		if (data->InventoryIndex > index)
 		{
-			data.InventoryIndex -= 1;
+			data->InventoryIndex -= 1;
 		}
 	}
 }

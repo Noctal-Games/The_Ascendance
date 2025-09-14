@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "TheAscendance/Items/Containers/Structs/InventorySlotData.h"
-#include <memory>
 #include "InventoryComponent.generated.h"
 
 
@@ -25,9 +24,9 @@ public:
 	void RemoveItemAtIndex(int index, int amount);
 
 	int GetItemCount(int id);
-	const TArray<FInventorySlotData>& GetInventory();
+	const TArray<TSharedRef<FInventorySlotData>>& GetInventory();
 
-	std::shared_ptr<FInventorySlotData> GetInventorySlotDataAtIndex(int index);
+	TSharedPtr<FInventorySlotData> GetInventorySlotDataAtIndex(int index);
 
 	bool Contains(int id);
 protected:
@@ -35,9 +34,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	std::shared_ptr<FInventorySlotData> GetInventorySlotData(int id);
+	TSharedPtr<FInventorySlotData> GetInventorySlotData(int id);
 	void RemoveItemFromArray(int index);
 
 private:
-	TArray<FInventorySlotData> m_Inventory;
+	TArray<TSharedRef<FInventorySlotData>> m_Inventory;
 };

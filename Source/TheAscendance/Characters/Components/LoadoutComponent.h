@@ -33,6 +33,6 @@ private:
 private:
 	TWeakObjectPtr<ABaseCharacter> m_Owner = nullptr;
 
-	TArray<FLoadoutSlotData> m_Loadout;
+	TArray<TSharedPtr<FLoadoutSlotData>> m_Loadout;
 	TArray<int> m_Spells;
 };

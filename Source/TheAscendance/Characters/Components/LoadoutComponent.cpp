@@ -17,14 +17,14 @@ void ULoadoutComponent::EquipItem(EEquippablePart part, int itemID)
 {
 	UnEquipItem(part);
 
-	m_Loadout.Add({ itemID, part });
+	m_Loadout.Add(MakeShared<FLoadoutSlotData>(itemID, part));
 }
 
 void ULoadoutComponent::UnEquipItem(EEquippablePart part)
 {
-	for (FLoadoutSlotData& data : m_Loadout)
+	for (const auto data : m_Loadout)
 	{
-		if (data.EquippedPart == part)
+		if (data->EquippedPart == part)
 		{
 			//Unequip Logic
 			return;
@@ -45,9 +45,9 @@ void ULoadoutComponent::BeginPlay()
 
 bool ULoadoutComponent::Contains(EEquippablePart part)
 {
-	for (FLoadoutSlotData& data : m_Loadout)
+	for (const auto data : m_Loadout)
 	{
-		if (data.EquippedPart == part)
+		if (data->EquippedPart == part)
 		{
 			return true;
 		}
