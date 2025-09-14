@@ -6,6 +6,7 @@
 #include "TheAscendance/Characters/Components/CharacterStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
+#include "TheAscendance/Core/CoreMacros.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter() : ABaseCharacter()
@@ -28,12 +29,6 @@ void APlayerCharacter::SetPlayerController(ATAPlayerController* PlayerController
 ATAPlayerController* APlayerCharacter::GetPlayerController()
 {
 	return m_PlayerController;
-}
-
-// Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	ABaseCharacter::Tick(DeltaTime);
 }
 
 void APlayerCharacter::SetIsSprinting(bool val)
@@ -145,5 +140,10 @@ void APlayerCharacter::BeginPlay()
 	m_CrouchCapsuleHeight = m_DefaultCapsuleHeight / 2;
 }
 
+// Called every frame
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	ABaseCharacter::Tick(DeltaTime);
+}
 
 

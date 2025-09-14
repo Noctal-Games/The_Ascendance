@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "TAPlayerController.h"
+#include "TheAscendance/Core/CoreMacros.h"
 #include "PlayerCharacter.h"
+
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -21,7 +23,7 @@ void ATAPlayerController::HandleMove(const FInputActionValue& value)
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
 		return;
 	}
 
@@ -35,7 +37,7 @@ void ATAPlayerController::HandleJump()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
 		return;
 	}
 
@@ -47,7 +49,7 @@ void ATAPlayerController::HandleStartSprint()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
 		return;
 	}
 
@@ -58,7 +60,7 @@ void ATAPlayerController::HandleEndSprint()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
 		return;
 	}
 
@@ -69,7 +71,7 @@ void ATAPlayerController::HandleStartCrouch()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
 		return;
 	}
 
@@ -80,7 +82,7 @@ void ATAPlayerController::HandleEndCrouch()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
 		return;
 	}
 
@@ -133,7 +135,7 @@ void ATAPlayerController::OnPossess(APawn* pawn)
 
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController failed to store reference to PlayerCharacter"));
+		LOG_ERROR("PlayerController failed to store reference to PlayerCharacter");
 		return;
 	}
 

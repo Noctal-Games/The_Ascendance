@@ -24,12 +24,15 @@ public:
 
 	void SetIsSprinting(bool val);
 	bool IsSprinting();
+
 	void SetIsCrouching(bool val);
 	bool IsCrouching();
 	bool IsCrouched();
+
 	void SetIsJumping();
 	virtual bool CanJumpInternal_Implementation() const override;
 	virtual void OnJumped_Implementation() override;
+
 	float GetDefaultCapsuleHeight();
 
 	void UpdateCrouchCamera(float deltaTime);

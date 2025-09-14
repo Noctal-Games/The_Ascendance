@@ -2,7 +2,10 @@
 
 
 #include "BaseCharacter.h"
+#include "TheAscendance/Core/CoreFunctionLibrary.h"
 #include "Components/CharacterStatsComponent.h"
+#include "TheAscendance/Items/HeldItem.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -65,6 +68,21 @@ void ABaseCharacter::Tick(float DeltaTime)
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (UWorld* world = UCoreFunctionLibrary::GetGameWorld())
+	{
+		if (m_MainHandItem = world->SpawnActor<AHeldItem>(AHeldItem::StaticClass()))
+		{
+			m_MainHandItem->Init(this);
+			//Handle attachment, either here or in HeldItem Init function
+		}
+
+		if (m_OffHandItem = world->SpawnActor<AHeldItem>(AHeldItem::StaticClass()))
+		{
+			m_OffHandItem->Init(this);
+			//Handle attachment, either here or in HeldItem Init function
+		}
+	}
 
 	m_CharacterStatsComponent->OnSpeedChanged.BindLambda([this](float walkSpeed) { GetCharacterMovement()->MaxWalkSpeed = walkSpeed; });
 	m_CharacterStatsComponent->Init();

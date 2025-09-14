@@ -2,6 +2,7 @@
 
 
 #include "CharacterStatsComponent.h"
+#include "TheAscendance/Core/CoreMacros.h"
 
 // Sets default values for this component's properties
 UCharacterStatsComponent::UCharacterStatsComponent()
@@ -57,6 +58,24 @@ void UCharacterStatsComponent::AddStat(ECharacterStat stat, float maxValue)
 	{
 		m_Stats.Add(stat, maxValue);
 	}
+
+	if (stat != ECharacterStat::HEALTH && stat != ECharacterStat::STAMINA && stat != ECharacterStat::MANA && stat != ECharacterStat::WALK_SPEED)
+	{
+		return;
+	}
+
+	ExecuteBindings(stat);
+}
+
+void UCharacterStatsComponent::SetStat(ECharacterStat stat, float amount)
+{
+	if (m_Stats.Contains(stat) == false)
+	{
+		LogStatError(stat);
+		return;
+	}
+
+	m_Stats[stat] = amount;
 
 	if (stat != ECharacterStat::HEALTH && stat != ECharacterStat::STAMINA && stat != ECharacterStat::MANA && stat != ECharacterStat::WALK_SPEED)
 	{
@@ -154,24 +173,6 @@ void UCharacterStatsComponent::AdjustMaxStatByValue(ECharacterStat stat, int amo
 
 	m_StatsMax[stat] += amount;
 	AdjustStatByValue(stat, amount);
-
-	if (stat != ECharacterStat::HEALTH && stat != ECharacterStat::STAMINA && stat != ECharacterStat::MANA && stat != ECharacterStat::WALK_SPEED)
-	{
-		return;
-	}
-
-	ExecuteBindings(stat);
-}
-
-void UCharacterStatsComponent::SetStat(ECharacterStat stat, float amount)
-{
-	if (m_Stats.Contains(stat) == false)
-	{
-		LogStatError(stat);
-		return;
-	}
-
-	m_Stats[stat] = amount;
 
 	if (stat != ECharacterStat::HEALTH && stat != ECharacterStat::STAMINA && stat != ECharacterStat::MANA && stat != ECharacterStat::WALK_SPEED)
 	{
@@ -281,13 +282,12 @@ void UCharacterStatsComponent::ExecuteBindings(ECharacterStat stat)
 
 void UCharacterStatsComponent::LogStatWarning(ECharacterStat stat)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s HAS NO BASE_%s"), *GetOwner()->GetName(), *UEnum::GetValueAsString(stat));
+	LOG_WARNING("%s HAS NO BASE_%s", *GetOwner()->GetName(), *UEnum::GetValueAsString(stat));
 }
 
 void UCharacterStatsComponent::LogStatError(ECharacterStat stat)
 {
-	UE_LOG(LogTemp, Error, TEXT("%s HAS NO %s STAT"), *GetOwner()->GetName(), *UEnum::GetValueAsString(stat));
-
+	LOG_ERROR("%s HAS NO %s STAT", *GetOwner()->GetName(), *UEnum::GetValueAsString(stat));
 }
 
 

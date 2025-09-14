@@ -9,6 +9,7 @@
 #include "BaseCharacter.generated.h"
 
 class UCharacterStatsComponent;
+class AHeldItem;
 
 UCLASS()
 class THEASCENDANCE_API ABaseCharacter : public ACharacter, public ISusceptible
@@ -33,4 +34,10 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "Character Stats Component"))
 	TObjectPtr<UCharacterStatsComponent> m_CharacterStatsComponent = nullptr;
+
+private:
+	UPROPERTY()
+	TObjectPtr<AHeldItem> m_MainHandItem;
+	UPROPERTY()
+	TObjectPtr<AHeldItem> m_OffHandItem;
 };
