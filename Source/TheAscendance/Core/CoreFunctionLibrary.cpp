@@ -4,7 +4,8 @@
 #include "CoreFunctionLibrary.h"
 #include "TheAscendance/Characters/Player/PlayerCharacter.h"
 #include "TheAscendance/Characters/Player/TAPlayerController.h"
-#include "TheAscendance/Game/PlayableGameMode.h"
+#include "TheAscendance/Game/GameModes/PlayableGameMode.h"
+#include "TheAscendance/Game/Subsystems/DataHandlerSubsystem.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/StreamableManager.h"
@@ -40,6 +41,16 @@ ATAPlayerController* UCoreFunctionLibrary::GetPlayerController()
 	if (ATAPlayerController* controller = Cast<ATAPlayerController>(UGameplayStatics::GetPlayerController(GetGameWorld(), 0)))
 	{
 		return controller;
+	}
+
+	return nullptr;
+}
+
+UDataHandlerSubsystem* UCoreFunctionLibrary::GetDataHandlerSubsystem()
+{
+	if (UWorld* world = GetGameWorld())
+	{
+		return world->GetGameInstance()->GetSubsystem<UDataHandlerSubsystem>();
 	}
 
 	return nullptr;

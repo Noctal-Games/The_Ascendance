@@ -6,12 +6,24 @@
 #include "GameFramework/GameModeBase.h"
 #include "PlayableGameMode.generated.h"
 
-/**
- * 
- */
+class UItemLoader;
+struct FItemData;
+
 UCLASS(Blueprintable)
 class THEASCENDANCE_API APlayableGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	FItemData* GetItemData(int id);
+
+	virtual void StartPlay() override;
+	virtual void StartToLeaveMap() override;
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UItemLoader> m_ItemLoader;
 };

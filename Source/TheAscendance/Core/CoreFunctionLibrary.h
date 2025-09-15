@@ -9,6 +9,7 @@
 class APlayableGameMode;
 class APlayerCharacter;
 class ATAPlayerController;
+class UDataHandlerSubsystem;
 
 UCLASS()
 class THEASCENDANCE_API UCoreFunctionLibrary : public UObject
@@ -29,6 +30,6 @@ public:
 	static ATAPlayerController* GetPlayerController();
 
 	//C++ Only
-	//static UDataHandlerSubsystem* GetDataHandlerSubsystem();
+	static UDataHandlerSubsystem* GetDataHandlerSubsystem();
 	static void RequestAsyncLoad(const FSoftObjectPath& targetToStream, TFunction<void()> delegate = nullptr);
 };
