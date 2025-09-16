@@ -9,31 +9,33 @@
 UENUM(BlueprintType)
 enum ECustomMovementMode
 {
-	CMOVE_None UMETA(DisplayName = "None"),
-	CMOVE_Sprinting UMETA(DisplayName = "Sprinting"),
-	CMOVE_Crouching UMETA(DisplayName = "Crouching"),
-	CMOVE_SprintCrouch UMETA(DisplayName = "SprintCrouching"),
+	CMOVE_NONE UMETA(DisplayName = "None"),
+
+	CMOVE_SPRINTING UMETA(DisplayName = "Sprinting"),
+	CMOVE_CROUCHING UMETA(DisplayName = "Crouching"),
+	CMOVE_CROUCH_SPRINTING UMETA(DisplayName = "Crouch Sprinting"),
+
 	CMOVE_MAX UMETA(Hidden),
 };
 
 class APlayerCharacter;
 
-UCLASS(Blueprintable)
+UCLASS()
 class THEASCENDANCE_API UPlayerMovementComponent : public UCharacterMovementComponent
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
-	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
+	virtual void UpdateCharacterStateBeforeMovement(float deltaSeconds) override;
+	virtual void UpdateCharacterStateAfterMovement(float deltaSeconds) override;
 
 	void TrySprinting();
 	bool CanSprint();
-	void PhysSprinting(float DeltaTime, int32 Iterations);
+	void PhysSprinting(float deltaTime, int32 iterations);
 
 	void TryCrouching();
 	bool CanCrouch();
-	void PhysCrouching(float DeltaTime, int32 Iterations);
+	void PhysCrouching(float deltaTime, int32 iterations);
 	bool CanUnCrouch();
 
 	UFUNCTION(BlueprintPure)
@@ -51,35 +53,27 @@ public:
 
 protected:
 	virtual void InitializeComponent() override;
-	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
+	virtual void PhysCustom(float deltaTime, int32 iterations) override;
 
 private:
-	//---- MANTLING ----
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
-	float _maxFrontMantleCheckDistance = 50;
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
-	float _mantleUpOffsetDistance = 30;
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
-	float _mantleReachHeight = 50;
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
-	float _mantleMinWallSteepnessAngle = 75;
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
-	float _mantleMaxSurfaceAngle = 40;
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
-	float _mantleMaxAlignmentAngle = 55;
+	//---- MANTLING ----  Currently Unused
+	//UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle", meta = (DisplayName = "Mantle Forward Reach"))
+	//float m_MaxFrontMantleCheckDistance = 50;
+	//UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	//float m_MantleHeightOffsetDistance = 30;
+	//UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	//float m_MantleReachHeight = 50;
+	//UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	//float m_MantleMinWallSteepnessAngle = 75;
+	//UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	//float m_MantleMaxSurfaceAngle = 40;
+	//UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Mantle")
+	//float m_MantleMaxAlignmentAngle = 55;
 
-	//---- SPRINTING ----
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Sprinting")
-	float _sprintSpeedBonus = 200.f;
-	bool _isSprinting;
+	TWeakObjectPtr<APlayerCharacter> m_PlayerCharacter = nullptr;
 
-	//---- CROUCHING ----
-	UPROPERTY(EditDefaultsOnly, Category = "Player Movement | Crouching")
-	float _crouchSpeed = 200.0f;
-	bool _isCrouching;
+	EMovementMode m_LastMode = EMovementMode::MOVE_Walking;
 
-	TWeakObjectPtr<APlayerCharacter> _player;
-
-	EMovementMode _lastMode;
-	bool _isActive;
+	bool m_IsSprinting = false;
+	bool m_IsCrouching = false;
 };
