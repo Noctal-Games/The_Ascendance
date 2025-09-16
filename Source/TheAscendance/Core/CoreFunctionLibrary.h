@@ -29,6 +29,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Core")
 	static ATAPlayerController* GetPlayerController();
 
+	UFUNCTION(BlueprintCallable, Category = "Core - Logging")
+	static void LogInfo(FString string);
+	UFUNCTION(BlueprintCallable, Category = "Core - Logging")
+	static void LogWarning(FString string);
+	UFUNCTION(BlueprintCallable, Category = "Core - Logging")
+	static void LogError(FString string);
+
+
 	//C++ Only
 	static UDataHandlerSubsystem* GetDataHandlerSubsystem();
 	static void RequestAsyncLoad(const FSoftObjectPath& targetToStream, TFunction<void()> delegate = nullptr);

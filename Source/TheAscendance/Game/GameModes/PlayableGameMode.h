@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "TheAscendance/Items/Enums/WeaponType.h"
 #include "PlayableGameMode.generated.h"
 
 class UItemLoader;
 struct FItemData;
+struct FWeaponData;
+struct FWeaponTypeData;
 
 UCLASS(Blueprintable)
 class THEASCENDANCE_API APlayableGameMode : public AGameModeBase
@@ -16,6 +19,10 @@ class THEASCENDANCE_API APlayableGameMode : public AGameModeBase
 	
 public:
 	FItemData* GetItemData(int id);
+	FWeaponData* GetWeaponData(int itemID);
+	const FWeaponTypeData* GetWeaponTypeData(EWeaponType type);
+
+	virtual void InitGameState() override;
 
 	virtual void StartPlay() override;
 	virtual void StartToLeaveMap() override;

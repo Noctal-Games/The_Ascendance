@@ -37,7 +37,18 @@ UDataTable* UDataHandlerSubsystem::LoadData(EDataGroup dataGroup)
 		return dataTable;
 	}
 
+	LOG_ERROR("DataLoader failed to load DataTable for DataGroup: %s", *UEnum::GetValueAsString(dataGroup));
 	return nullptr;
+}
+
+const TMap<EWeaponType, FWeaponTypeData>& UDataHandlerSubsystem::GetWeaponTypeMap()
+{
+	return m_WeaponTypeData;
+}
+
+void UDataHandlerSubsystem::Initialize(FSubsystemCollectionBase& collection)
+{
+	Super::Initialize(collection);
 }
 
 bool UDataHandlerSubsystem::ShouldCreateSubsystem(UObject* Outer) const

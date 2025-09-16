@@ -23,10 +23,10 @@ public:
 	void SetStaticMesh();
 
 private:
-	UPROPERTY(EditInstanceOnly, meta = (DisplayName = "Static Mesh Component"));
-	TObjectPtr<UStaticMeshComponent> m_MeshComponent = nullptr;
 	UPROPERTY();
 	TSoftObjectPtr<UStaticMesh> m_Mesh = nullptr;
+	UPROPERTY(EditInstanceOnly, meta = (DisplayName = "Static Mesh Component"));
+	TObjectPtr<UStaticMeshComponent> m_MeshComponent = nullptr;
 
 	TSharedPtr<FItemData> m_ItemData = nullptr;
 };

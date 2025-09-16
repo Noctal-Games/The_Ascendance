@@ -91,18 +91,46 @@ void ATAPlayerController::HandleEndCrouch()
 
 void ATAPlayerController::HandleMainHandPrimaryAttack()
 {
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->MainHandPrimaryAttack();
 }
 
-void ATAPlayerController::HandleMainHandAltAttack()
+void ATAPlayerController::HandleMainHandSecondaryAttack()
 {
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->MainHandSecondaryAttack();
 }
 
 void ATAPlayerController::HandleOffhandPrimaryAttack()
 {
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->OffHandPrimaryAttack();
 }
 
-void ATAPlayerController::HandleOffhandAltAttack()
+void ATAPlayerController::HandleOffhandSecondaryAttack()
 {
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->OffHandSecondaryAttack();
 }
 
 void ATAPlayerController::HandleToggleInventory()
@@ -119,6 +147,39 @@ void ATAPlayerController::HandleTogglePauseMenu()
 
 void ATAPlayerController::HandleInteract()
 {
+}
+
+void ATAPlayerController::HandleTestFunction1()
+{
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->TestFunction1();
+}
+
+void ATAPlayerController::HandleTestFunction2()
+{
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->TestFunction2();
+}
+
+void ATAPlayerController::HandleTestFunction3()
+{
+	if (m_PlayerCharacter.IsValid() == false)
+	{
+		LOG_ERROR("PlayerController has lost it's reference to the PlayerCharacter");
+		return;
+	}
+
+	m_PlayerCharacter->TestFunction3();
 }
 
 void ATAPlayerController::OnPossess(APawn* pawn)
@@ -188,17 +249,26 @@ void ATAPlayerController::BindActions(UEnhancedInputComponent* enhancedInputComp
 
 	checkf(ActionMainHandPrimaryAttack, TEXT("Missing 'Main Hand Primary Attack' Action"));
 	enhancedInputComponent->BindAction(ActionMainHandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandPrimaryAttack);
-	checkf(ActionMainHandAltAttack, TEXT("Missing 'Main Hand Alt Attack' Action"));
-	enhancedInputComponent->BindAction(ActionMainHandAltAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandAltAttack);
+	checkf(ActionMainHandSecondaryAttack, TEXT("Missing 'Main Hand Alt Attack' Action"));
+	enhancedInputComponent->BindAction(ActionMainHandSecondaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleMainHandSecondaryAttack);
 
-	checkf(ActionOffhandPrimaryAttack, TEXT("Missing 'Offhand Primary Attack' Action"));
-	enhancedInputComponent->BindAction(ActionOffhandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandPrimaryAttack);
-	checkf(ActionOffhandAltAttack, TEXT("Missing 'Offhand Alt Attack' Action"));
-	enhancedInputComponent->BindAction(ActionOffhandAltAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandAltAttack);
+	checkf(ActionOffHandPrimaryAttack, TEXT("Missing 'Offhand Primary Attack' Action"));
+	enhancedInputComponent->BindAction(ActionOffHandPrimaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandPrimaryAttack);
+	checkf(ActionOffHandSecondaryAttack, TEXT("Missing 'Offhand Alt Attack' Action"));
+	enhancedInputComponent->BindAction(ActionOffHandSecondaryAttack, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleOffhandSecondaryAttack);
 
 	checkf(ActionTogglePauseMenu, TEXT("Missing 'TogglePauseMenu' Action"));
 	enhancedInputComponent->BindAction(ActionTogglePauseMenu, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleTogglePauseMenu);
 
 	checkf(ActionInteract, TEXT("Missing 'Interact' Action"));
 	enhancedInputComponent->BindAction(ActionInteract, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleInteract);
+
+	checkf(ActionTestFunction1, TEXT("Missing 'TestFunction1' Action"));
+	enhancedInputComponent->BindAction(ActionTestFunction1, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleTestFunction1);
+
+	checkf(ActionTestFunction2, TEXT("Missing 'TestFunction2' Action"));
+	enhancedInputComponent->BindAction(ActionTestFunction2, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleTestFunction2);
+
+	checkf(ActionTestFunction3, TEXT("Missing 'TestFunction3' Action"));
+	enhancedInputComponent->BindAction(ActionTestFunction3, ETriggerEvent::Triggered, this, &ATAPlayerController::HandleTestFunction3);
 }

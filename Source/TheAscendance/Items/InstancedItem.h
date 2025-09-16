@@ -17,5 +17,5 @@ protected:
 
 private:
 	UPROPERTY(EditInstanceOnly, meta = (DisplayName = "Instance ID"))
-	int m_InstanceID;
+	int m_InstanceID = 0;
 };

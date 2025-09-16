@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "TheAscendance/Items/Enums/ItemType.h"
+#include "TheAscendance/Core/CoreMacros.h"
+#include "TheAscendance/Items/Structs/WeaponData.h"
 #include "ItemData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -11,29 +13,21 @@ struct FItemData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	int ItemID = 0;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FName ItemName = "";
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	EItemType ItemType = EItemType::DEFAULT;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FString ItemDescription = "";
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	bool IsStackable = true;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<UStaticMesh> ItemMesh = nullptr;
 
 	FItemData() {}
 
-	FItemData(FItemData& itemData)
-	{
-		ItemID = itemData.ItemID;
-		ItemName = itemData.ItemName;
-		ItemType = itemData.ItemType;
-		ItemDescription = itemData.ItemDescription;
-		IsStackable = itemData.IsStackable;
-		ItemMesh = itemData.ItemMesh;
-	}
+	FItemData(FItemData& itemData) = default;
 };
 

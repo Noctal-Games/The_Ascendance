@@ -31,15 +31,19 @@ protected:
 	void HandleEndCrouch();
 
 	void HandleMainHandPrimaryAttack();
-	void HandleMainHandAltAttack();
+	void HandleMainHandSecondaryAttack();
 
 	void HandleOffhandPrimaryAttack();
-	void HandleOffhandAltAttack();
+	void HandleOffhandSecondaryAttack();
 
 	void HandleToggleInventory();
 	void HandleToggleQuestMenu();
 	void HandleTogglePauseMenu();
 	void HandleInteract();
+
+	void HandleTestFunction1();
+	void HandleTestFunction2();
+	void HandleTestFunction3();
 
 	virtual void OnPossess(APawn* pawn) override;
 	virtual void OnUnPossess() override;
@@ -81,19 +85,29 @@ public:
 	TObjectPtr<UInputAction> ActionMainHandPrimaryAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> ActionMainHandAltAttack = nullptr;
+	TObjectPtr<UInputAction> ActionMainHandSecondaryAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> ActionOffhandPrimaryAttack = nullptr;
+	TObjectPtr<UInputAction> ActionOffHandPrimaryAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
-	TObjectPtr<UInputAction> ActionOffhandAltAttack = nullptr;
+	TObjectPtr<UInputAction> ActionOffHandSecondaryAttack = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
 	TObjectPtr<UInputAction> ActionTogglePauseMenu = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Character Actions")
 	TObjectPtr<UInputAction> ActionInteract = nullptr;
+
+	//Test
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Test Actions")
+	TObjectPtr<UInputAction> ActionTestFunction1 = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Test Actions")
+	TObjectPtr<UInputAction> ActionTestFunction2 = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input | Global | Test Actions")
+	TObjectPtr<UInputAction> ActionTestFunction3 = nullptr;
 
 private:
 	UPROPERTY()
