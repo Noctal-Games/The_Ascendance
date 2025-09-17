@@ -203,12 +203,12 @@ void ATAPlayerController::OnPossess(APawn* pawn)
 	m_PlayerCharacter->SetPlayerController(this);
 
 	m_EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	checkf(m_EnhancedInputComponent, TEXT("ENHANCED_INPUT_COMPONENT is an invalid value"));
+	checkf(m_EnhancedInputComponent, TEXT("EnhancedInputComponent is an invalid value"));
 
 	UEnhancedInputLocalPlayerSubsystem* inputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	checkf(inputSubsystem, TEXT("INPUT_SUBSYSTEM is an invalid value"));
+	checkf(inputSubsystem, TEXT("InputSubsystem is an invalid value"));
 
-	checkf(InputMappingContext, TEXT("INPUT_MAPPING_CONTEXT is an invalid value"));
+	checkf(InputMappingContext, TEXT("InputMappingContext is an invalid value"));
 	inputSubsystem->ClearAllMappings();
 	inputSubsystem->AddMappingContext(InputMappingContext, 0);
 

@@ -4,6 +4,8 @@
 #include "InventoryComponent.h"
 #include "TheAscendance/Core/CoreMacros.h"
 #include "TheAscendance/Core/CoreFunctionLibrary.h"
+#include "TheAscendance/Items/Structs/ItemData.h"
+#include "TheAscendance/Game/GameModes/PlayableGameMode.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -25,14 +27,15 @@ void UInventoryComponent::AddItem(int id, int amount)
 {
 	if (APlayableGameMode* gameMode = UCoreFunctionLibrary::GetPlayableGameMode())
 	{
-		//FItemData* itemData = gameMode->GetItemData(id);
+		FItemData* itemData = gameMode->GetItemData(id);
 
-		//if (itemData == nullptr)
-		//{
-		//	return;
-		//}
+		if (itemData == nullptr)
+		{
+			LOG_WARNING("Failed to add Item to Inventory with ID: %i", id);
+			return;
+		}
 
-		if (/*itemData->isStackable == true && */Contains(id) == true)
+		if (itemData->IsStackable == true && Contains(id) == true)
 		{
 			GetInventorySlotData(id)->ItemAmount += amount;
 		}

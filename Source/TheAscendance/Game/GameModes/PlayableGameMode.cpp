@@ -9,6 +9,7 @@ FItemData* APlayableGameMode::GetItemData(int id)
 {
 	if (m_ItemLoader == nullptr)
 	{
+		LOG_ERROR("PlayableGameMode has no valid ItemLoader");
 		return nullptr;
 	}
 
@@ -19,6 +20,7 @@ FWeaponData* APlayableGameMode::GetWeaponData(int id)
 {
 	if (m_ItemLoader == nullptr)
 	{
+		LOG_ERROR("PlayableGameMode has no valid ItemLoader");
 		return nullptr;
 	}
 
@@ -29,6 +31,7 @@ const FWeaponTypeData* APlayableGameMode::GetWeaponTypeData(EWeaponType type)
 {
 	if (m_ItemLoader == nullptr)
 	{
+		LOG_ERROR("PlayableGameMode has no valid ItemLoader");
 		return nullptr;
 	}
 
@@ -55,23 +58,6 @@ void APlayableGameMode::InitGameState()
 	{
 		LOG_ERROR("PlayableGameMode failed to create ItemLoader");
 	}
-
-}
-
-void APlayableGameMode::StartPlay()
-{
-	Super::StartPlay();
-}
-
-void APlayableGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void APlayableGameMode::StartToLeaveMap()
-{
-	// Save Logic
-	Super::StartToLeaveMap();
 }
 
 

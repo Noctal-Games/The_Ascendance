@@ -24,12 +24,6 @@ public:
 
 	virtual void InitGameState() override;
 
-	virtual void StartPlay() override;
-	virtual void StartToLeaveMap() override;
-
-protected:
-	virtual void BeginPlay() override;
-
 private:
 	UPROPERTY()
 	TObjectPtr<UItemLoader> m_ItemLoader;

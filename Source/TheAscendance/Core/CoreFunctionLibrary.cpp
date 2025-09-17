@@ -88,9 +88,38 @@ void UCoreFunctionLibrary::RequestAsyncLoad(const FSoftObjectPath& targetToStrea
 
 	if (delegate == nullptr)
 	{
-		UAssetManager::GetStreamableManager().RequestAsyncLoad(targetToStream);
+		UAssetManager::GetStreamableManager().RequestAsyncLoad(targetToStream, FStreamableDelegate::CreateLambda([targetToStream]()
+			{
+				UObject* loadedObject = targetToStream.ResolveObject();
+
+				if (loadedObject != nullptr)
+				{
+					LOG_INFO("Successful ASync Load for: %s", *targetToStream.ToString());
+				}
+				else
+				{
+					LOG_ERROR("Failed ASync Load for: %s", *targetToStream.ToString());
+				}
+
+			}));
+
 		return;
 	}
 
-	UAssetManager::GetStreamableManager().RequestAsyncLoad(targetToStream, FStreamableDelegate::CreateLambda(delegate));
+	UAssetManager::GetStreamableManager().RequestAsyncLoad(targetToStream, FStreamableDelegate::CreateLambda([delegate = MoveTemp(delegate), targetToStream]()
+		{
+			UObject* loadedObject = targetToStream.ResolveObject();
+
+			if (loadedObject != nullptr)
+			{
+				LOG_INFO("Successful ASync Load for: %s", *targetToStream.ToString());
+			}
+			else
+			{
+				LOG_ERROR("Failed ASync Load for: %s", *targetToStream.ToString());
+			}
+
+			delegate();
+		}
+	));
 }

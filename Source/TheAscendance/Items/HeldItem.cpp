@@ -12,22 +12,14 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 
-AHeldItem::AHeldItem()
+AHeldItem::AHeldItem() : AItem()
 {
-	m_MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
-	checkf(m_MeshComponent, TEXT("Item failed to initialise StaticMeshComponent"));
-	m_MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	m_MeshComponent->SetEnableGravity(false);
-	m_MeshComponent->SetSimulatePhysics(false);
-
 	m_Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
 	checkf(m_Collider, TEXT("Combat Item Collider failed to initialise"));
 	m_Collider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_Collider->SetVisibility(false);
 	m_Collider->SetHiddenInGame(true);
 	m_Collider->SetupAttachment(m_MeshComponent);
-
-	SetRootComponent(m_MeshComponent);
 }
 
 void AHeldItem::SetItemOwner(ABaseCharacter* owner)
@@ -83,10 +75,10 @@ void AHeldItem::Init(FItemData* itemData)
 
 void AHeldItem::SetStaticMesh()
 {
+	AItem::SetStaticMesh();
+
 	if (m_Mesh.Get() != nullptr)
 	{
-		m_MeshComponent->SetStaticMesh(m_Mesh.Get());
-
 		FBoxSphereBounds3d bounds = m_Mesh->GetBounds();
 		bounds.BoxExtent.Y += bounds.BoxExtent.Y * 0.25f;
 		bounds.BoxExtent.Z += bounds.BoxExtent.Z * 0.25f;

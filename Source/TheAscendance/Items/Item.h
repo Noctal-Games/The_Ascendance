@@ -19,10 +19,10 @@ public:
 	// Sets default values for this actor's properties
 	AItem();
 
-	void Init(FItemData* itemData);
-	void SetStaticMesh();
+	virtual void Init(FItemData* itemData);
+	virtual void SetStaticMesh();
 
-private:
+protected:
 	UPROPERTY();
 	TSoftObjectPtr<UStaticMesh> m_Mesh = nullptr;
 	UPROPERTY(EditInstanceOnly, meta = (DisplayName = "Static Mesh Component"));

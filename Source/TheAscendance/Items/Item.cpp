@@ -15,9 +15,11 @@ AItem::AItem()
 
 	m_MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
 	checkf(m_MeshComponent, TEXT("Item failed to initialise StaticMeshComponent"));
-	m_MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	m_MeshComponent->SetEnableGravity(true);
-	m_MeshComponent->SetSimulatePhysics(true);
+	m_MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	m_MeshComponent->SetEnableGravity(false);
+	m_MeshComponent->SetSimulatePhysics(false);
+
+	SetRootComponent(m_MeshComponent);
 }
 
 void AItem::Init(FItemData* itemData)
@@ -27,6 +29,10 @@ void AItem::Init(FItemData* itemData)
 		LOG_ERROR("Tried to initialise Item with null ItemData");
 		return;
 	}
+
+	m_MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	m_MeshComponent->SetEnableGravity(true);
+	m_MeshComponent->SetSimulatePhysics(true);
 
 	m_ItemData = MakeShared<FItemData>(*itemData);
 

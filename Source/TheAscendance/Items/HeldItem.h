@@ -3,20 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Item.h"
 #include "TheAscendance/Items/Enums/WeaponType.h"
 #include "HeldItem.generated.h"
 
 class ABaseCharacter;
 class UBoxComponent;
-class UStaticMeshComponent;
-class UStaticMesh;
 struct FItemData;
 struct FWeaponData;
 struct FWeaponTypeData;
 
 UCLASS()
-class THEASCENDANCE_API AHeldItem : public AActor
+class THEASCENDANCE_API AHeldItem : public AItem
 {
 	GENERATED_BODY()
 	
@@ -25,8 +23,8 @@ public:
 
 	void SetItemOwner(ABaseCharacter* owner);
 
-	void Init(FItemData* itemData);
-	void SetStaticMesh();
+	virtual void Init(FItemData* itemData) override;
+	virtual void SetStaticMesh() override;
 	void UnEquip();
 
 	bool StartPrimaryAttack();
@@ -36,7 +34,6 @@ public:
 
 	EWeaponType GetWeaponType();
 
-	//void UpdateItem();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,16 +41,10 @@ protected:
 private:
 	void EndPrimaryAttack();
 	void EndSecondaryAttack();
+
 private:
 	TWeakObjectPtr<ABaseCharacter> m_Owner = nullptr;
 
-	UPROPERTY();
-	TSoftObjectPtr<UStaticMesh> m_Mesh = nullptr;
-
-	UPROPERTY();
-	TObjectPtr<UStaticMeshComponent> m_MeshComponent = nullptr;
-
-	TSharedPtr<FItemData> m_ItemData = nullptr;
 	UPROPERTY()
 	TObjectPtr<UBoxComponent> m_Collider = nullptr;
 
