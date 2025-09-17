@@ -22,11 +22,11 @@ public:
 	void Init();
 
 	void AddStat(ECharacterStat stat, float maxValue);
+	void SetStat(ECharacterStat stat, float amount);
 
 	void AdjustStatByValue(ECharacterStat stat, float amount);
 	void AdjustStatByPercentage(ECharacterStat stat, float percentage);
 	void AdjustMaxStatByValue(ECharacterStat stat, int amount);
-	void SetStat(ECharacterStat stat, float amount);
 
 	int GetStatAsValue(ECharacterStat stat) const;
 	int GetStatAsPercentage(ECharacterStat stat) const;

@@ -2,7 +2,9 @@
 
 
 #include "PlayerMovementComponent.h"
+#include "TheAscendance/Core/CoreMacros.h"
 #include "PlayerCharacter.h"
+
 #include "Components/CapsuleComponent.h"
 
 void UPlayerMovementComponent::UpdateCharacterStateBeforeMovement(float deltaSeconds)
@@ -41,7 +43,7 @@ bool UPlayerMovementComponent::CanSprint()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerMovementComponent has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerMovementComponent has lost it's reference to the PlayerCharacter");
 		return false;
 	}
 
@@ -98,7 +100,7 @@ bool UPlayerMovementComponent::CanCrouch()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerMovementComponent has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerMovementComponent has lost it's reference to the PlayerCharacter");
 		return false;
 	}
 
@@ -129,7 +131,7 @@ bool UPlayerMovementComponent::CanUnCrouch()
 {
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerMovementComponent has lost it's reference to the PlayerCharacter"));
+		LOG_ERROR("PlayerMovementComponent has lost it's reference to the PlayerCharacter");
 		return false;
 	}
 
@@ -221,7 +223,7 @@ void UPlayerMovementComponent::InitializeComponent()
 
 	if (m_PlayerCharacter.IsValid() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController failed to store reference to PlayerCharacter"));
+		LOG_ERROR("PlayerController failed to store reference to PlayerCharacter");
 	}
 
 	m_LastMode = EMovementMode::MOVE_Walking;
