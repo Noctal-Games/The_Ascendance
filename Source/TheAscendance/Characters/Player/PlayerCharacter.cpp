@@ -6,7 +6,6 @@
 #include "TheAscendance/Characters/Components/CharacterStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
-#include "TheAscendance/Core/CoreMacros.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter() : ABaseCharacter()
@@ -15,66 +14,72 @@ APlayerCharacter::APlayerCharacter() : ABaseCharacter()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationPitch = false;
 
-	m_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
-	checkf(m_Camera, TEXT("Player Camera failed to initialise"));
-	m_Camera->SetupAttachment(GetRootComponent());
-	m_Camera->bUsePawnControlRotation = true;
+	_camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
+	checkf(_camera, TEXT("Player Camera failed to initialise"));
+	_camera->SetupAttachment(GetRootComponent());
+	_camera->bUsePawnControlRotation = true;
 }
 
 void APlayerCharacter::SetPlayerController(ATAPlayerController* PlayerController)
 {
-	m_PlayerController = PlayerController;
+	_playerController = PlayerController;
 }
 
 ATAPlayerController* APlayerCharacter::GetPlayerController()
 {
-	return m_PlayerController;
+	return _playerController;
+}
+
+// Called every frame
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	ABaseCharacter::Tick(DeltaTime);
 }
 
 void APlayerCharacter::SetIsSprinting(bool val)
 {
-	m_IsSprinting = val;
+	_isSprinting = val;
 }
 bool APlayerCharacter::IsSprinting()
 {
-	if (m_CharacterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) <= 0)
+	if (characterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) <= 0)
 	{
 		return false;
 	}
 
-	return m_IsSprinting;
+	return _isSprinting;
 }
 void APlayerCharacter::SetIsCrouching(bool val)
 {
-	m_IsCrouching = val;
+	_isCrouching = val;
 }
 bool APlayerCharacter::IsCrouching()
 {
-	if (m_IsJumping == true)
+	if (_isJumping == true)
 	{
 		return false;
 	}
 
-	return m_IsCrouching;
+	return _isCrouching;
 }
 bool APlayerCharacter::IsCrouched()
 {
-	return m_CurrentCapsuleHeight < m_DefaultCapsuleHeight - 5;
+	return _currentCapsuleHeight < _defaultCapsuleHeight - 5;
 }
 void APlayerCharacter::SetIsJumping()
 {
-	m_IsJumping = true;
+	_isJumping = true;
 }
 bool APlayerCharacter::CanJumpInternal_Implementation() const
 {
-	if (bIsCrouched == true || m_CharacterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) < 5)
+	if (bIsCrouched == true || characterStatsComponent->GetStatAsValue(ECharacterStat::STAMINA) < 5)
 	{
 		return false;
 	}
 
 	if (JumpIsAllowedInternal() == false)
 	{
-		if (m_MovementComponent->IsSprinting() == true)
+		if (_movementComponent->IsSprinting() == true)
 		{
 			return true;
 		}
@@ -88,42 +93,42 @@ void APlayerCharacter::OnJumped_Implementation()
 {
 	Super::OnJumped_Implementation();
 
-	m_CharacterStatsComponent->AdjustStatByValue(ECharacterStat::STAMINA, -5);
+	characterStatsComponent->AdjustStatByValue(ECharacterStat::STAMINA, -5);
 }
 float APlayerCharacter::GetDefaultCapsuleHeight()
 {
-	return m_DefaultCapsuleHeight;
+	return _defaultCapsuleHeight;
 }
-void APlayerCharacter::UpdateCrouchCamera(float deltaTime)
+void APlayerCharacter::UpdateCrouchCamera(float DeltaTime)
 {
-	float crouchSpeed = deltaTime * 5;
+	float crouchSpeed = DeltaTime * 5;
 
-	if (m_MovementComponent->IsCrouchingCustom() && m_CurrentCapsuleHeight > m_CrouchCapsuleHeight)
+	if (_movementComponent->IsCrouchingCustom() && _currentCapsuleHeight > _crouchCapsuleHeight)
 	{
-		m_CurrentCapsuleHeight = FMath::Lerp(m_CurrentCapsuleHeight, m_CrouchCapsuleHeight, crouchSpeed);
-		GetCapsuleComponent()->SetCapsuleSize(m_DefaultCapsuleRadius, m_CurrentCapsuleHeight, true);
+		_currentCapsuleHeight = FMath::Lerp(_currentCapsuleHeight, _crouchCapsuleHeight, crouchSpeed);
+		GetCapsuleComponent()->SetCapsuleSize(_defaultCapsuleRadius, _currentCapsuleHeight, true);
 	}
-	if (m_MovementComponent->IsCrouchingCustom() == false && m_CurrentCapsuleHeight < m_DefaultCapsuleHeight)
+	if (_movementComponent->IsCrouchingCustom() == false && _currentCapsuleHeight < _defaultCapsuleHeight)
 	{
-		m_CurrentCapsuleHeight = FMath::Lerp(m_CurrentCapsuleHeight, m_DefaultCapsuleHeight, crouchSpeed);
-		GetCapsuleComponent()->SetCapsuleSize(m_DefaultCapsuleRadius, m_CurrentCapsuleHeight, true);
+		_currentCapsuleHeight = FMath::Lerp(_currentCapsuleHeight, _defaultCapsuleHeight, crouchSpeed);
+		GetCapsuleComponent()->SetCapsuleSize(_defaultCapsuleRadius, _currentCapsuleHeight, true);
 	}
 }
-void APlayerCharacter::OnMovementModeChanged(EMovementMode prevMovementMode, uint8 previousCustomMode)
+void APlayerCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
-	Super::OnMovementModeChanged(prevMovementMode, previousCustomMode);
+	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 
-	if (prevMovementMode != EMovementMode::MOVE_Falling)
+	if (PrevMovementMode != EMovementMode::MOVE_Falling)
 	{
 		return;
 	}
 
-	m_IsJumping = false;
+	_isJumping = false;
 }
 
 UCameraComponent* APlayerCharacter::GetCamera()
 {
-	return m_Camera;
+	return _camera;
 }
 
 // Called when the game starts or when spawned
@@ -131,19 +136,26 @@ void APlayerCharacter::BeginPlay()
 {
 	ABaseCharacter::BeginPlay();
 
-	m_MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	checkf(m_MovementComponent, TEXT("Movement Component is an invalid value"));
+	_movementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	checkf(_movementComponent, TEXT("Movement Component is an invalid value"));
 
-	m_DefaultCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
-	m_DefaultCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	m_CurrentCapsuleHeight = m_DefaultCapsuleHeight;
-	m_CrouchCapsuleHeight = m_DefaultCapsuleHeight / 2;
+	_defaultCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+	_defaultCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	_currentCapsuleHeight = _defaultCapsuleHeight;
+	_crouchCapsuleHeight = _defaultCapsuleHeight / 2;
+
+	if (characterStatsComponent != nullptr)
+	{
+		characterStatsComponent->AddStat(ECharacterStat::HEALTH, _baseHealth);
+		characterStatsComponent->AddStat(ECharacterStat::STAMINA, _baseStamina);
+		characterStatsComponent->AddStat(ECharacterStat::MANA, _baseMana);
+		characterStatsComponent->AddStat(ECharacterStat::SPEED, _baseSpeed);
+		characterStatsComponent->AddStat(ECharacterStat::PHYSICAL_ATTACK, 0);
+		characterStatsComponent->AddStat(ECharacterStat::PHYSICAL_RESISTANCE, 0);
+		characterStatsComponent->AddStat(ECharacterStat::MAGIC_ATTACK, 0);
+		characterStatsComponent->AddStat(ECharacterStat::MAGIC_RESISTANCE, 0);
+	}
 }
 
-// Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	ABaseCharacter::Tick(DeltaTime);
-}
 
 

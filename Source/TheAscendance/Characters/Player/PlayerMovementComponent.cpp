@@ -2,52 +2,44 @@
 
 
 #include "PlayerMovementComponent.h"
-#include "TheAscendance/Core/CoreMacros.h"
 #include "PlayerCharacter.h"
-
 #include "Components/CapsuleComponent.h"
 
-void UPlayerMovementComponent::UpdateCharacterStateBeforeMovement(float deltaSeconds)
+void UPlayerMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
 	TrySprinting();
 	TryCrouching();
 
-	Super::UpdateCharacterStateBeforeMovement(deltaSeconds);
+	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
 }
 
-void UPlayerMovementComponent::UpdateCharacterStateAfterMovement(float deltaSeconds)
+void UPlayerMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeconds)
 {
-	Super::UpdateCharacterStateAfterMovement(deltaSeconds);
+	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
 }
 
 void UPlayerMovementComponent::TrySprinting()
 {
-	m_IsSprinting = CanSprint();
+	_isSprinting = CanSprint();
 
-	if (m_IsSprinting == false)
+	if (_isSprinting == false)
 	{
 		return;
 	}
 
-	if (m_IsCrouching == true)
+	if (_isCrouching == true)
 	{
-		SetMovementMode(MOVE_Custom, CMOVE_CROUCH_SPRINTING);
+		SetMovementMode(MOVE_Custom, CMOVE_SprintCrouch);
 	}
 	else
 	{
-		SetMovementMode(MOVE_Custom, CMOVE_SPRINTING);
+		SetMovementMode(MOVE_Custom, CMOVE_Sprinting);
 	}
 }
 
 bool UPlayerMovementComponent::CanSprint()
 {
-	if (m_PlayerCharacter.IsValid() == false)
-	{
-		LOG_ERROR("PlayerMovementComponent has lost it's reference to the PlayerCharacter");
-		return false;
-	}
-
-	if (IsFalling() == true || m_PlayerCharacter->IsSprinting() == false)
+	if (IsFalling() == true || _player->IsSprinting() == false)
 	{
 		return false;
 	}
@@ -55,7 +47,7 @@ bool UPlayerMovementComponent::CanSprint()
 	FVector direction = Velocity;
 	direction.Normalize();
 
-	if (FVector::DotProduct(m_PlayerCharacter->GetActorForwardVector(), direction) <= 0.1)
+	if (FVector::DotProduct(_player->GetActorForwardVector(), direction) <= 0.1)
 	{
 		return false;
 	}
@@ -67,44 +59,38 @@ bool UPlayerMovementComponent::CanSprint()
 	return floorResult.bWalkableFloor;
 }
 
-void UPlayerMovementComponent::PhysSprinting(float deltaTime, int32 iterations)
+void UPlayerMovementComponent::PhysSprinting(float DeltaTime, int32 Iterations)
 {
-	if (m_IsSprinting == false)
+	if (_isSprinting == false)
 	{
 		// Restore default walk variables
 		SetMovementMode(DefaultLandMovementMode);
 	}
 
-	PhysWalking(deltaTime, iterations);
+	PhysWalking(DeltaTime, Iterations);
 }
 
 void UPlayerMovementComponent::TryCrouching()
 {
-	m_IsCrouching = CanCrouch();
+	_isCrouching = CanCrouch();
 
-	if (m_IsCrouching == false)
+	if (_isCrouching == false)
 	{
 		return;
 	}
 
-	if (m_IsSprinting == true)
+	if (_isSprinting == true)
 	{
-		SetMovementMode(MOVE_Custom, CMOVE_CROUCH_SPRINTING);
+		SetMovementMode(MOVE_Custom, CMOVE_SprintCrouch);
 	}
 	else
 	{
-		SetMovementMode(MOVE_Custom, CMOVE_CROUCHING);
+		SetMovementMode(MOVE_Custom, CMOVE_Crouching);
 	}
 }
 bool UPlayerMovementComponent::CanCrouch()
 {
-	if (m_PlayerCharacter.IsValid() == false)
-	{
-		LOG_ERROR("PlayerMovementComponent has lost it's reference to the PlayerCharacter");
-		return false;
-	}
-
-	if (IsFalling() == true || (m_PlayerCharacter->IsCrouching() == false && (m_PlayerCharacter->IsCrouched() == false || m_PlayerCharacter->IsCrouched() == true && CanUnCrouch() == true)))
+	if (IsFalling() == true || (_player->IsCrouching() == false && (_player->IsCrouched() == false || _player->IsCrouched() == true && CanUnCrouch() == true)))
 	{
 		return false;
 	}
@@ -116,30 +102,24 @@ bool UPlayerMovementComponent::CanCrouch()
 	return floorResult.bWalkableFloor;
 }
 
-void UPlayerMovementComponent::PhysCrouching(float deltaTime, int32 iterations)
+void UPlayerMovementComponent::PhysCrouching(float DeltaTime, int32 Iterations)
 {
-	if (m_IsCrouching == false)
+	if (_isCrouching == false)
 	{
 		// Restore default walk variables
 		SetMovementMode(DefaultLandMovementMode);
 	}
 
-	PhysWalking(deltaTime, iterations);
+	PhysWalking(DeltaTime, Iterations);
 }
 
 bool UPlayerMovementComponent::CanUnCrouch()
 {
-	if (m_PlayerCharacter.IsValid() == false)
-	{
-		LOG_ERROR("PlayerMovementComponent has lost it's reference to the PlayerCharacter");
-		return false;
-	}
-
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(GetOwner());
 
 	FVector transitionTarget = GetActorLocation();
-	transitionTarget.Z += m_PlayerCharacter->GetDefaultCapsuleHeight();
+	transitionTarget.Z += _player->GetDefaultCapsuleHeight();
 
 	FCollisionShape capShape = FCollisionShape::MakeCapsule(GetCapsuleRadius(), GetCapsuleHalfHeight());
 
@@ -175,11 +155,11 @@ bool UPlayerMovementComponent::IsWalkingCustom()
 
 bool UPlayerMovementComponent::IsSprinting() 
 {
-	return m_IsSprinting;
+	return _isSprinting;
 }
 bool UPlayerMovementComponent::IsCrouchingCustom() 
 {
-	return m_IsCrouching;
+	return _isCrouching;
 }
 
 bool UPlayerMovementComponent::IsCustomMovementMode() 
@@ -196,7 +176,7 @@ float UPlayerMovementComponent::GetCapsuleHalfHeight()
 }
 float UPlayerMovementComponent::GetMaxSpeed() const
 {
-	const float maxSpeed = MaxWalkSpeed;
+	const float maxSpeed = Super::GetMaxSpeed();
 
 	if (MovementMode != MOVE_Custom)
 	{
@@ -205,12 +185,12 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 
 	switch (CustomMovementMode)
 	{
-	case CMOVE_SPRINTING:
-		return  maxSpeed + m_PlayerCharacter->GetStat(ECharacterStat::SPRINT_SPEED_BONUS);
-	case CMOVE_CROUCHING:
-		return maxSpeed - m_PlayerCharacter->GetStat(ECharacterStat::CROUCH_SPEED_PENALITY);
-	case CMOVE_CROUCH_SPRINTING:
-		return (maxSpeed - m_PlayerCharacter->GetStat(ECharacterStat::CROUCH_SPEED_PENALITY)) + m_PlayerCharacter->GetStat(ECharacterStat::SPRINT_SPEED_BONUS);
+	case CMOVE_Sprinting:
+		return  maxSpeed * 1.3;
+	case CMOVE_Crouching:
+		return _crouchSpeed;
+	case CMOVE_SprintCrouch:
+		return _crouchSpeed + (_sprintSpeedBonus / 2);
 	default:
 		return maxSpeed;
 	}
@@ -219,30 +199,25 @@ void UPlayerMovementComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	m_PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+	_player = Cast<APlayerCharacter>(GetOwner());
 
-	if (m_PlayerCharacter.IsValid() == false)
-	{
-		LOG_ERROR("PlayerController failed to store reference to PlayerCharacter");
-	}
-
-	m_LastMode = EMovementMode::MOVE_Walking;
+	_lastMode = EMovementMode::MOVE_Walking;
 }
 
-void UPlayerMovementComponent::PhysCustom(float deltaTime, int32 iterations)
+void UPlayerMovementComponent::PhysCustom(float deltaTime, int32 Iterations)
 {
-	Super::PhysCustom(deltaTime, iterations);
+	Super::PhysCustom(deltaTime, Iterations);
 
 	switch (CustomMovementMode)
 	{
-	case CMOVE_SPRINTING:
-		PhysSprinting(deltaTime, iterations);
+	case CMOVE_Sprinting:
+		PhysSprinting(deltaTime, Iterations);
 		break;
-	case CMOVE_CROUCHING:
-		PhysCrouching(deltaTime, iterations);
+	case CMOVE_Crouching:
+		PhysCrouching(deltaTime, Iterations);
 		break;
-	case CMOVE_CROUCH_SPRINTING:
-		PhysCrouching(deltaTime, iterations);
+	case CMOVE_SprintCrouch:
+		PhysCrouching(deltaTime, Iterations);
 		break;
 	}
 }
